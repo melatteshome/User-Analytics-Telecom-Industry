@@ -15,11 +15,8 @@ class DatabaseConnection:
         self.user = os.getenv("DB_USER")
         self.password = os.getenv("DB_PASSWORD")
         self.database_name = os.getenv("DB_NAME")
-
         self.conn= None
 
-   
-      
     def connect(self):
              # 1. Connect to PostgreSQL server
         try:
@@ -39,6 +36,7 @@ class DatabaseConnection:
 
         except Exception as e:
             print(f"Error connecting to the database: {e}")
+            
     
     def close_connection(self):
         try:
