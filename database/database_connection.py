@@ -2,13 +2,13 @@ import os
 import psycopg2
 from psycopg2 import sql, connect
 from dotenv import load_dotenv
+import pandas as pd
 
 class DatabaseConnection:
     
     def __init__(self):
 
         load_dotenv()
-        
         # Get the database connection parameters from environment variables
         self.host = os.getenv("DB_HOST")
         self.port = os.getenv("DB_PORT")
@@ -25,18 +25,15 @@ class DatabaseConnection:
                 port=self.port,
                 user=self.user,
                 password= self.password,
-                database=self.database_name
+                database= self.database_name
             )
-            if self.conn.closed()== 0:
-                print('connection is open')
-            else :
-                print('connection failed or is closed')
-
-            print(f"Successfully connected to the database '{self.database_name}'.")
-
+            
+            print(f"Successfully connected to the database.")
+            return self.conn
         except Exception as e:
             print(f"Error connecting to the database: {e}")
-            
+
+        
     
     def close_connection(self):
         try:
@@ -44,5 +41,18 @@ class DatabaseConnection:
             print('connection closed successfully')
         except Exception as e:
             print('connection is not closed {e}')
+    
+    def excuteQuery(self , query):
+        try:
+            with self.conn.cursor() as cursor:
+               cursor.execute(query)
+               if cursor.description:
+                 result = cursor.fetchall()
+                 return result
+        except Exception as e:
+            print('error executing query: {e}')
+            raise
+
+               
 
 
