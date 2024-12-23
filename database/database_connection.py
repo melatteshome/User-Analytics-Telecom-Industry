@@ -42,16 +42,50 @@ class DatabaseConnection:
         except Exception as e:
             print('connection is not closed {e}')
     
-    def excuteQuery(self , query):
+
+    
+    # def excuteQuery(self , query):
+    #     try:
+    #         with self.conn.cursor() as cursor:
+    #            cursor.execute(query)
+    #            if cursor.description:
+    #              result = cursor.fetchall()
+    #              return result
+    #         self.conn.commit
+    #         return None
+    #     except Exception as e:
+    #         print('error executing query: {e}')
+    #         raise
+    #     finally:
+    #     # Close the cursor and connection
+    #         if 'cursor' in locals():
+    #             cursor.close()
+    #         if 'connection' in locals():
+    #             self.conn.close()
+
+
+    def execute_query(self, query):
         try:
             with self.conn.cursor() as cursor:
-               cursor.execute(query)
-               if cursor.description:
-                 result = cursor.fetchall()
-                 return result
+                cursor.execute(query)
+                if cursor.description:  # Check if the query returned data
+                    # Fetch all rows
+                    result = cursor.fetchall()
+                    # Get column names
+                    columns = [desc[0] for desc in cursor.description]
+                    # Convert to DataFrame
+                    df = pd.DataFrame(result, columns=columns)
+                    return df
+                self.conn.commit()  # Commit for write operations
+                return None
         except Exception as e:
-            print('error executing query: {e}')
+            print(f"Error executing query: {e}")
             raise
+        finally:
+            # Close the connection if it's no longer needed
+            if hasattr(self, 'conn') and self.conn:
+                self.conn.close()
+
 
                
 
