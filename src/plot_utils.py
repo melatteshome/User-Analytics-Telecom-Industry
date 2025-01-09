@@ -4,10 +4,20 @@ import seaborn as sns
 import numpy as np
 
 
-def plot_countplot(df, column, hue=None):
-    plt.figure(figsize=(10, 6))
-    sns.countplot(data=df, x=column, hue=hue)
-    plt.title(f'Countplot of {column}')
+def plot_count(df, col, title, xlabel, ylabel, figsize=(10, 6)):
+    plt.figure(figsize=figsize)
+    sns.countplot(data=df, x=col)
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
     plt.show()
 
+
+def plot_hist(df, col, title, xlabel, ylabel, bins=10, figsize=(10, 6)):
+    plt.figure(figsize=figsize)
+    plt.hist(df[col], bins=bins)
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.show()
 
