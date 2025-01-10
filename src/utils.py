@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from scipy import stats
 
 def check_duplicates(df):
     duplicates = df.duplicated()
@@ -28,14 +29,23 @@ def check_missing_values(df):
 def filter_numerical_columns(df):
     return df.select_dtypes(include= [np.number])
 
-def remove_outliers(df, col):
-    q1 = df[col].quantile(0.25)
-    q3 = df[col].quantile(0.75)
-    iqr = q3 - q1
-    lower_bound = q1 - 1.5 * iqr
-    upper_bound = q3 + 1.5 * iqr
+def remove_outliers(df, col, threshold=3):
+    """
+    Removes outliers from a DataFrame column using the Z-score method.
 
-    return df[(df[col] > lower_bound) & (df[col] < upper_bound)]
+    Parameters:
+    df (pd.DataFrame): The input DataFrame.
+    col (str): The column name from which to remove outliers.
+    threshold (float): The Z-score threshold to use for identifying outliers.
+
+    Returns:
+    pd.DataFrame: A DataFrame with outliers removed.
+    """
+    z_scores = stats.zscore(df[col])
+    abs_z_scores = abs(z_scores)
+    filtered_entries = abs_z_scores < threshold
+
+    return df[filtered_entries]
 
 
 
